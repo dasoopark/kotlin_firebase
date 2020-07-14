@@ -2,8 +2,8 @@
 
 
 ## About
-> How to use firebase, storage, remote_config
+> * How to use firebase, storage, remote_config
 
-> >realtimeDatabase - onWriteData, child, order
+> > * realtimeDatabase - onWriteData, child, order
 for kotlin 
 
