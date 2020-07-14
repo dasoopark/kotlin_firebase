@@ -15,7 +15,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class   MainActivity : AppCompatActivity() {
     private var firebaseAuth: FirebaseAuth? = null      //firebase auth
     private var mFirebaseStorage: FirebaseStorage? = null
     private var viewProfile: View? = null
