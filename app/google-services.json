@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:419155119017:android:ba9d8676da2e084bf652b8",
+        "android_client_info": {
+          "package_name": "kr.co.korearental.kotlinfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "419155119017-hg4t1je218a16c708fm7ml6k39o24fii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.co.korearental.kotlinfirebase",
+            "certificate_hash": "4a6754bc962b456ee6c3b45ad25f16e4bb8f2e54"
+          }
+        },
+        {
+          "client_id": "419155119017-63k12p2ar7dfimp1vmiihqrrg3pnp792.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7B-xtiYKdTLsZMBz8WawewWNs1uHMIm4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "419155119017-63k12p2ar7dfimp1vmiihqrrg3pnp792.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:419155119017:android:3a10a35c523a7265f652b8",
         "android_client_info": {
           "package_name": "kr.co.korearental.testfire"

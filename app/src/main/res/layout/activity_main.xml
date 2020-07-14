@@ -55,4 +55,14 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_upload"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <Button
+        android:id="@+id/remote_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="리모트 값 확인하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

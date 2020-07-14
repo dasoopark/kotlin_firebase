@@ -1,16 +1,18 @@
 package kr.co.korearental.kotlinfirebase
 
-
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -19,6 +21,8 @@ class   MainActivity : AppCompatActivity() {
     private var firebaseAuth: FirebaseAuth? = null      //firebase auth
     private var mFirebaseStorage: FirebaseStorage? = null
     private var viewProfile: View? = null
+    private var mFirebaseRemoteConfig = Firebase.remoteConfig
+
     var pickImageFromAlbum = 0
     var fbStorage: FirebaseStorage? = null
     var uriPhoto: Uri? = null
@@ -52,6 +56,36 @@ class   MainActivity : AppCompatActivity() {
         }.addOnFailureListener { Log.d("test", "getBytes Failed") }
     }
 
+
+    fun displayConfig() {
+        val cheat_enabled = mFirebaseRemoteConfig.getBoolean("cheat_enabled")
+        val price = mFirebaseRemoteConfig.getString("price")
+        Toast.makeText(this, "$price", Toast.LENGTH_SHORT).show()
+    }
+
+    fun remote_data(){
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(60) // For development only not for production!, default is 12 hours
+            .build()
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings)
+        mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+    }
+
+    fun onFetchButton(v:View?){
+        mFirebaseRemoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this,
+                OnCompleteListener<Boolean> { task ->
+                    if (task.isSuccessful) {
+                        val updated = task.result
+                        //Log.d(TAG, "Config params updated: $updated")
+                    } else {
+                        // Log.d(TAG, "Fetch failed")
+                    }
+                    displayConfig() // 가져온 설정 읽기(다음 슬라이드)
+                })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,6 +97,13 @@ class   MainActivity : AppCompatActivity() {
         btn_upload.setOnClickListener{
             displayImage()
         }
+
+        remote_button.setOnClickListener{
+            remote_data()
+            onFetchButton(btn_upload)
+        }
+
         mFirebaseStorage = FirebaseStorage.getInstance();
     }
 }
+
