@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -27,6 +28,8 @@ class   MainActivity : AppCompatActivity() {
     var fbStorage: FirebaseStorage? = null
     var uriPhoto: Uri? = null
 
+
+    //Autrhentication 인증, 로그인 (이메일 형태로)
     private fun loginEmail() {
         if (email.text.toString() == "" || password.text.toString() == "") {
             Toast.makeText(this, "signInWithEmail failed.", Toast.LENGTH_SHORT).show()
@@ -46,6 +49,7 @@ class   MainActivity : AppCompatActivity() {
         }
     }
 
+    //storage에 저장된 이미지 불러오기
     private fun displayImage(){
         val storageRef = mFirebaseStorage!!.getReferenceFromUrl("gs://testfire-6f469.appspot.com/test.jpg")
         storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
@@ -57,6 +61,7 @@ class   MainActivity : AppCompatActivity() {
     }
 
 
+    //displayconfig ~ onfechButton : remoteconfig를 사용하기 위해 사용
     fun displayConfig() {
         val cheat_enabled = mFirebaseRemoteConfig.getBoolean("cheat_enabled")
         val price = mFirebaseRemoteConfig.getString("price")
@@ -86,6 +91,57 @@ class   MainActivity : AppCompatActivity() {
                 })
     }
 
+    //데이터베이스
+    fun onWriteData(v: View?) {
+        val database = FirebaseDatabase.getInstance()
+        var myRef = database.getReference("message")
+        myRef.setValue("sample_dat")
+        Toast.makeText(this, "데이터베이스에 추가되었습니다", Toast.LENGTH_SHORT).show()
+
+        //child를 이용해 자식 생성하기
+        val childRef = database.getReference("users")
+        val userid = "park"
+        val username = "dasoo"
+        childRef.child("name").child(userid).setValue(username)
+
+        //push(), 고유한 아이디를 갖는 자식 노드 생성하기, Map<String, Object> 형태 값 저장 예
+        val uniquemyRef = database.getReference("posts")
+        val key = uniquemyRef.push().key
+        val postValues: HashMap<String, Any> = HashMap()
+        postValues["uid"] = "aloverlace"
+        postValues["author"] = "Ada Lovelace"
+        postValues["title"] = "hello post"
+        postValues["body"] = "hello body"
+        postValues["starCount"] = 0
+        uniquemyRef.child(key!!).setValue(postValues)
+
+        // 데이터 정렬하기
+        val TopPostsQuery : Query = database.reference.child("posts").orderByChild("starCount")
+        TopPostsQuery.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
+                    // TODO: handle the post
+                }
+            }
+        })
+
+        //하나만 있을 때 읽는 리스너
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.getValue(String::class.java)
+                dataid.setText(value).toString()
+            }
+            override fun onCancelled(error: DatabaseError) {
+                    error.toException()
+            }
+        }) //리스너
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -103,7 +159,14 @@ class   MainActivity : AppCompatActivity() {
             onFetchButton(btn_upload)
         }
 
+        database.setOnClickListener{
+            onWriteData(database)
+        }
+
+
+
         mFirebaseStorage = FirebaseStorage.getInstance();
     }
+
 }
 
