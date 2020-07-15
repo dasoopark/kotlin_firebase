@@ -27,6 +27,7 @@ class   MainActivity : AppCompatActivity() {
     private var mFirebaseStorage: FirebaseStorage? = null
     private var viewProfile: View? = null
     private var mFirebaseRemoteConfig = Firebase.remoteConfig
+    var tokenText = ""
 
     var pickImageFromAlbum = 0
     var fbStorage: FirebaseStorage? = null
@@ -101,12 +102,13 @@ class   MainActivity : AppCompatActivity() {
         var myRef = database.getReference("message")
         myRef.setValue("sample_dat")
         Toast.makeText(this, "데이터베이스에 추가되었습니다", Toast.LENGTH_SHORT).show()
-
+        FCMToken()
         //child를 이용해 자식 생성하기
         val childRef = database.getReference("users")
         val userid = "park"
         val username = "dasoo"
         childRef.child("name").child(userid).setValue(username)
+        childRef.child("token").child(username).setValue(tokenText)
 
         //push(), 고유한 아이디를 갖는 자식 노드 생성하기, Map<String, Object> 형태 값 저장 예
         val uniquemyRef = database.getReference("posts")
@@ -146,7 +148,7 @@ class   MainActivity : AppCompatActivity() {
     }
 
     ////////// 클라우드 메시지 서비스
-    open fun FCMToken() {
+    open fun FCMToken(): String {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w( "FragmentActivity.TAG","getInstanceId failed",task.exception  )
@@ -156,10 +158,12 @@ class   MainActivity : AppCompatActivity() {
                 val token = task.result.token
                 // Log and toast
                 val msg = "FCM token:$token"
+                tokenText = msg
                 tokentext.setText(msg).toString()
                 Log.d("FragmentActivity.TAG", msg)
                 Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
             })
+        return tokenText
     }
 
 
